@@ -1,0 +1,38 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h5 mb-3">Lixeira: <%= projeto.nome %></h1>
+<p class="small text-body-secondary">
+  A exclusão definitiva só é liberada depois de <%= diasCarencia %> dias na lixeira, e só para o Perfil 1.
+</p>
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table tabela-compacta mb-0 align-middle">
+      <thead><tr><th>Arquivo</th><th>Pasta</th><th>Excluído por</th><th>Há quantos dias</th><th></th></tr></thead>
+      <tbody>
+        <% if (!itens.length) { %>
+          <tr><td colspan="5" class="small text-body-secondary">A lixeira está vazia.</td></tr>
+        <% } %>
+        <% itens.forEach(function (a) { %>
+          <tr>
+            <td><%= a.nome %></td>
+            <td class="small"><%= a.pasta_nome %></td>
+            <td class="small"><%= a.excluido_por_nome || '' %></td>
+            <td class="small"><%= a.dias_na_lixeira %></td>
+            <td class="text-end d-flex gap-2 justify-content-end">
+              <form method="post" action="/arquivos/<%= a.id %>/restaurar">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <button class="btn btn-sm btn-outline-primary">Restaurar</button>
+              </form>
+              <% if (a.dias_na_lixeira >= diasCarencia) { %>
+                <form method="post" action="/arquivos/<%= a.id %>/definitivo">
+                  <input type="hidden" name="_csrf" value="<%= csrf %>">
+                  <button class="btn btn-sm btn-outline-danger">Excluir em definitivo</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

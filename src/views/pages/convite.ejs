@@ -1,0 +1,36 @@
+<%- include('../partials/cabecalho') %>
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h5 mb-3">Convite de acesso</h1>
+        <p class="small mb-3">
+          Projeto <strong><%= convite.projeto_nome %></strong>, pasta <strong><%= convite.pasta_nome %></strong>,
+          válido até <%= new Date(convite.expira_em).toLocaleDateString('pt-BR') %>.
+        </p>
+        <% if (vencido || convite.revogado_em) { %>
+          <div class="alert alert-warning">Este convite não está mais válido. Peça um novo à coordenação.</div>
+        <% } else if (convite.aceito_em) { %>
+          <div class="alert alert-info">Convite já utilizado. <a href="/entrar">Entrar no sistema</a>.</div>
+        <% } else { %>
+          <form method="post" action="/convites/<%= convite.token %>">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <div class="mb-3">
+              <label class="form-label" for="nome">Seu nome</label>
+              <input class="form-control" id="nome" name="nome" value="<%= convite.nome %>" required>
+            </div>
+            <% if (!jaCadastrado) { %>
+              <div class="mb-3">
+                <label class="form-label" for="senha">Crie uma senha</label>
+                <input class="form-control" type="password" id="senha" name="senha" minlength="<%= minSenha %>" required>
+                <div class="form-text">Mínimo de <%= minSenha %> caracteres.</div>
+              </div>
+            <% } %>
+            <button class="btn btn-primary w-100">Aceitar convite</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

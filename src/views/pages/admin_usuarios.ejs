@@ -1,0 +1,43 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h5 mb-3">Pessoas cadastradas</h1>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table tabela-compacta mb-0">
+          <thead><tr><th>Nome</th><th>E-mail</th><th>Instituição</th><th>Perfil no sistema</th></tr></thead>
+          <tbody>
+            <% lista.forEach(function (u) { %>
+              <tr>
+                <td><%= u.nome %></td>
+                <td class="small"><%= u.email %></td>
+                <td class="small"><%= u.instituicao || '' %></td>
+                <td class="small"><%= u.admin_sistema ? 'administrador' : 'comum' %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Cadastrar pessoa</div>
+      <div class="card-body">
+        <form method="post" action="/admin/usuarios">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <div class="mb-2"><label class="form-label" for="nome">Nome</label><input class="form-control" id="nome" name="nome" required></div>
+          <div class="mb-2"><label class="form-label" for="email">E-mail</label><input class="form-control" type="email" id="email" name="email" required></div>
+          <div class="mb-2"><label class="form-label" for="instituicao">Instituição</label><input class="form-control" id="instituicao" name="instituicao"></div>
+          <div class="mb-2"><label class="form-label" for="senha">Senha inicial</label><input class="form-control" type="password" id="senha" name="senha" minlength="12" required></div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="admin" name="admin">
+            <label class="form-check-label" for="admin">Administrador do sistema</label>
+          </div>
+          <button class="btn btn-primary">Cadastrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

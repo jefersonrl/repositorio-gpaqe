@@ -1,0 +1,66 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h5 mb-3">Pessoas e perfis: <%= projeto.nome %></h1>
+<div class="card shadow-sm mb-4">
+  <div class="table-responsive">
+    <table class="table tabela-compacta mb-0 align-middle">
+      <thead><tr><th>Nome</th><th>Instituição</th><th>Perfil</th><th>Núcleo</th><th>Vigência</th><th></th></tr></thead>
+      <tbody>
+        <% vinculos.forEach(function (v) { %>
+          <tr>
+            <td><%= v.nome %><br><span class="small text-body-secondary"><%= v.email %></span></td>
+            <td class="small"><%= v.instituicao || '' %></td>
+            <td class="small"><%= v.perfil %>: <%= v.perfil_nome %></td>
+            <td class="small"><%= v.nucleo_nome || '' %></td>
+            <td class="small">
+              <%= new Date(v.inicio).toLocaleDateString('pt-BR') %>
+              <%= v.fim ? ' até ' + new Date(v.fim).toLocaleDateString('pt-BR') : '' %>
+              <% if (v.revogado_em) { %><span class="badge text-bg-secondary">encerrado</span><% } %>
+            </td>
+            <td class="text-end">
+              <% if (ehCoordenacao && !v.revogado_em) { %>
+                <form method="post" action="/projetos/<%= projeto.id %>/pessoas/<%= v.usuario_id %>/encerrar">
+                  <input type="hidden" name="_csrf" value="<%= csrf %>">
+                  <button class="btn btn-sm btn-link text-danger p-0">encerrar</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% if (ehCoordenacao) { %>
+  <div class="card shadow-sm">
+    <div class="card-header fw-semibold">Incluir ou atualizar vínculo</div>
+    <div class="card-body">
+      <form method="post" action="/projetos/<%= projeto.id %>/pessoas" class="row g-2 align-items-end">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="col-md-4">
+          <label class="form-label" for="usuarioId">Pessoa</label>
+          <select class="form-select" id="usuarioId" name="usuarioId" required>
+            <% cadastradas.forEach(function (u) { %>
+              <option value="<%= u.id %>"><%= u.nome %> (<%= u.email %>)</option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" for="perfilVinculo">Perfil</label>
+          <select class="form-select" id="perfilVinculo" name="perfil">
+            <% [1,2,3,4,5].forEach(function (n) { %><option value="<%= n %>">Perfil <%= n %></option><% }); %>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" for="nucleoId">Núcleo</label>
+          <select class="form-select" id="nucleoId" name="nucleoId">
+            <option value="">sem núcleo</option>
+            <% nucleos.forEach(function (n) { %><option value="<%= n.id %>"><%= n.nome %></option><% }); %>
+          </select>
+        </div>
+        <div class="col-md-2 d-grid"><button class="btn btn-primary">Salvar</button></div>
+      </form>
+    </div>
+  </div>
+<% } %>
+<%- include('../partials/rodape') %>

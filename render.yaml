@@ -1,0 +1,34 @@
+# Configuração de implantação no Render.
+# Crie o banco MySQL antes, no Aiven ou em outro provedor, e informe DB_URL.
+services:
+  - type: web
+    name: repositorio-gpaqe
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /saude
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MIGRAR_AO_SUBIR
+        value: "true"
+      - key: MODO_DEMONSTRACAO
+        value: "true"
+      - key: STORAGE_DRIVER
+        value: local
+      - key: URL_ASSINADA_MINUTOS
+        value: "10"
+      - key: MAX_UPLOAD_MB
+        value: "25"
+      - key: SESSION_SECRET
+        generateValue: true
+      # Preencher no painel do Render, em Environment:
+      - key: DB_URL
+        sync: false
+      - key: DB_SSL_CA
+        sync: false
+      - key: BASE_URL
+        sync: false

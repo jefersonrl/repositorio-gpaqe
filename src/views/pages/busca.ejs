@@ -1,0 +1,48 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h5 mb-3">Busca</h1>
+<form class="card shadow-sm mb-4" method="get" action="/buscar">
+  <div class="card-body row g-2 align-items-end">
+    <div class="col-md-5">
+      <label class="form-label" for="termo">Termo</label>
+      <input class="form-control" id="termo" name="termo" value="<%= filtros.termo %>" placeholder="nome, descrição ou metadado">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" for="projeto">Projeto</label>
+      <select class="form-select" id="projeto" name="projeto">
+        <option value="">todos</option>
+        <% meus.forEach(function (p) { %>
+          <option value="<%= p.id %>" <%= String(filtros.projeto) === String(p.id) ? 'selected' : '' %>><%= p.sigla %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label" for="ano">Ano</label>
+      <input class="form-control" id="ano" name="ano" value="<%= filtros.ano %>">
+    </div>
+    <div class="col-md-2 d-grid"><button class="btn btn-primary">Buscar</button></div>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-header fw-semibold"><%= resultados.length %> resultado(s)</div>
+  <div class="table-responsive">
+    <table class="table tabela-compacta mb-0 align-middle">
+      <thead><tr><th>Arquivo</th><th>Projeto</th><th>Pasta</th><th>Seu acesso</th><th>Atualizado</th></tr></thead>
+      <tbody>
+        <% if (!resultados.length) { %>
+          <tr><td colspan="5" class="small text-body-secondary">Nada encontrado com esses filtros.</td></tr>
+        <% } %>
+        <% resultados.forEach(function (r) { %>
+          <tr>
+            <td><a href="/arquivos/<%= r.id %>"><%= r.nome %></a></td>
+            <td class="small"><%= r.projeto_sigla %></td>
+            <td class="small"><a href="/pastas/<%= r.pasta_id %>"><%= r.pasta_nome %></a></td>
+            <td><%- include('../partials/nivel', { nivel: r.nivel }) %></td>
+            <td class="small"><%= new Date(r.atualizado_em).toLocaleDateString('pt-BR') %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

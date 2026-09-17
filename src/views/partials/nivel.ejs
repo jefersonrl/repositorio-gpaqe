@@ -1,0 +1,7 @@
+<%
+  var rotulos = { 'A': 'Autoridade', 'R': 'Responsável', 'R*': 'Responsável restrito',
+                  'C': 'Consultado', 'I': 'Informado', 'X': 'Sem acesso' };
+  var cores   = { 'A': 'primary', 'R': 'success', 'R*': 'warning text-dark',
+                  'C': 'info text-dark', 'I': 'secondary', 'X': 'dark' };
+%>
+<span class="badge text-bg-<%= cores[nivel] || 'secondary' %>" title="<%= rotulos[nivel] || nivel %>"><%= nivel %></span>

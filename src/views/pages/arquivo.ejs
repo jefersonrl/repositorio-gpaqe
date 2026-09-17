@@ -1,0 +1,112 @@
+<%- include('../partials/cabecalho') %>
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+  <div>
+    <h1 class="h5 mb-1"><%= arquivo.nome %></h1>
+    <p class="small text-body-secondary mb-0">
+      Pasta <a href="/pastas/<%= arquivo.pasta_id %>"><%= arquivo.pasta_nome %></a>
+      | enviado por <%= arquivo.autor_nome %>
+      <% if (arquivo.atalho_para) { %>
+        | <span class="badge text-bg-light border">atalho para o arquivo <%= arquivo.atalho_para %></span>
+      <% } %>
+    </p>
+  </div>
+  <div class="d-flex gap-2">
+    <% if (podeBaixar) { %>
+      <a class="btn btn-sm btn-primary" href="/arquivos/<%= arquivo.id %>/baixar">Baixar versão atual</a>
+    <% } %>
+    <% if (podeExcluir && arquivo.estado === 'ativo') { %>
+      <form method="post" action="/arquivos/<%= arquivo.id %>/excluir">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn-sm btn-outline-danger">Enviar para a lixeira</button>
+      </form>
+    <% } %>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Histórico de versões</div>
+      <div class="table-responsive">
+        <table class="table tabela-compacta mb-0 align-middle">
+          <thead><tr><th>Versão</th><th>Enviada por</th><th>Data</th><th>Comentário</th><th></th></tr></thead>
+          <tbody>
+            <% versoes.forEach(function (v) { %>
+              <tr>
+                <td><%= v.numero %></td>
+                <td class="small"><%= v.autor_nome %></td>
+                <td class="small"><%= new Date(v.enviado_em).toLocaleString('pt-BR') %></td>
+                <td class="small"><%= v.comentario || '' %></td>
+                <td class="text-end">
+                  <% if (podeBaixar) { %>
+                    <a class="btn btn-sm btn-outline-secondary" href="/arquivos/<%= arquivo.id %>/baixar/<%= v.numero %>">Baixar</a>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <% if (podeVersionar && !arquivo.atalho_para) { %>
+        <div class="card-body border-top">
+          <form method="post" action="/arquivos/<%= arquivo.id %>/versoes" enctype="multipart/form-data" class="row g-2 align-items-end">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <div class="col-md-5">
+              <label class="form-label" for="novaVersao">Nova versão</label>
+              <input class="form-control" type="file" id="novaVersao" name="arquivo" required>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label" for="comentario">O que mudou</label>
+              <input class="form-control" id="comentario" name="comentario">
+            </div>
+            <div class="col-md-2 d-grid"><button class="btn btn-primary">Registrar</button></div>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Metadados</div>
+      <ul class="list-group list-group-flush">
+        <% if (!metadados.length) { %>
+          <li class="list-group-item small text-body-secondary">Nenhum metadado registrado.</li>
+        <% } %>
+        <% metadados.forEach(function (m) { %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span class="small"><strong><%= m.chave %>:</strong> <%= m.valor %></span>
+            <% if (podeVersionar) { %>
+              <form method="post" action="/arquivos/<%= arquivo.id %>/metadados/<%= m.id %>/remover">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <button class="btn btn-sm btn-link text-danger p-0">remover</button>
+              </form>
+            <% } %>
+          </li>
+        <% }); %>
+      </ul>
+      <% if (podeVersionar) { %>
+        <div class="card-body border-top">
+          <form method="post" action="/arquivos/<%= arquivo.id %>/metadados" class="row g-2 align-items-end">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <div class="col-5">
+              <label class="form-label" for="chave">Chave</label>
+              <select class="form-select" id="chave" name="chave">
+                <option value="tipo">tipo</option>
+                <option value="ano">ano</option>
+                <option value="status">status</option>
+                <option value="palavra-chave">palavra-chave</option>
+              </select>
+            </div>
+            <div class="col-5">
+              <label class="form-label" for="valor">Valor</label>
+              <input class="form-control" id="valor" name="valor" required>
+            </div>
+            <div class="col-2 d-grid"><button class="btn btn-outline-primary">Add</button></div>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

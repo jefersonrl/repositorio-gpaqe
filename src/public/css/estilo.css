@@ -1,0 +1,8 @@
+:root { --gpaqe-azul: #1F3864; }
+a { color: var(--gpaqe-azul); }
+.card-header { background-color: #f4f6fa; }
+.trilha a { text-decoration: none; }
+.tabela-compacta td, .tabela-compacta th { padding: .45rem .6rem; font-size: .925rem; }
+.lista-pastas .list-group-item:hover { background-color: #f6f8fc; }
+.legenda-nivel span { margin-right: .35rem; }
+code.chave { font-size: .85rem; color: #444; }

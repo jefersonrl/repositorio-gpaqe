@@ -1,0 +1,115 @@
+<%- include('../partials/cabecalho') %>
+<nav class="trilha mb-2">
+  <ol class="breadcrumb small mb-0">
+    <% trilha.forEach(function (t) { %>
+      <li class="breadcrumb-item"><a href="/pastas/<%= t.id %>"><%= t.nome %></a></li>
+    <% }); %>
+    <li class="breadcrumb-item active">Permissões</li>
+  </ol>
+</nav>
+<h1 class="h5 mb-3">Permissões de <%= pasta.nome %></h1>
+
+<div class="alert alert-light border small">
+  A regra individual vence a regra de perfil na mesma pasta. Sem regra aqui, vale a regra da pasta acima.
+  O nível X retira o acesso herdado e esconde a pasta.
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Por perfil</div>
+      <div class="table-responsive">
+        <table class="table tabela-compacta mb-0 align-middle">
+          <thead><tr><th>Perfil</th><th>Nível</th><th></th></tr></thead>
+          <tbody>
+            <% permissoes.filter(function (p) { return p.perfil; }).forEach(function (p) { %>
+              <tr>
+                <td class="small"><%= p.perfil %>: <%= p.perfil_nome %></td>
+                <td><%- include('../partials/nivel', { nivel: p.nivel }) %></td>
+                <td class="text-end">
+                  <form method="post" action="/pastas/<%= pasta.id %>/permissoes/<%= p.id %>/remover">
+                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                    <button class="btn btn-sm btn-link text-danger p-0">remover</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-body border-top">
+        <form method="post" action="/pastas/<%= pasta.id %>/permissoes/perfil" class="row g-2 align-items-end">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <div class="col-6">
+            <label class="form-label" for="perfil">Perfil</label>
+            <select class="form-select" id="perfil" name="perfil">
+              <% [1,2,3,4,5].forEach(function (n) { %><option value="<%= n %>">Perfil <%= n %></option><% }); %>
+            </select>
+          </div>
+          <div class="col-4">
+            <label class="form-label" for="nivel">Nível</label>
+            <select class="form-select" id="nivel" name="nivel">
+              <% niveis.forEach(function (n) { %><option value="<%= n %>"><%= n %></option><% }); %>
+            </select>
+          </div>
+          <div class="col-2 d-grid"><button class="btn btn-primary">Salvar</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Individual, incluindo o acesso restrito</div>
+      <div class="table-responsive">
+        <table class="table tabela-compacta mb-0 align-middle">
+          <thead><tr><th>Pessoa</th><th>Nível</th><th>Expira</th><th></th></tr></thead>
+          <tbody>
+            <% var individuais = permissoes.filter(function (p) { return p.usuario_id; }); %>
+            <% if (!individuais.length) { %>
+              <tr><td colspan="4" class="small text-body-secondary">Nenhuma regra individual.</td></tr>
+            <% } %>
+            <% individuais.forEach(function (p) { %>
+              <tr>
+                <td class="small"><%= p.usuario_nome %><br><span class="text-body-secondary"><%= p.usuario_email %></span></td>
+                <td><%- include('../partials/nivel', { nivel: p.nivel }) %></td>
+                <td class="small"><%= p.expira_em ? new Date(p.expira_em).toLocaleDateString('pt-BR') : 'sem prazo' %></td>
+                <td class="text-end">
+                  <form method="post" action="/pastas/<%= pasta.id %>/permissoes/<%= p.id %>/remover">
+                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                    <button class="btn btn-sm btn-link text-danger p-0">remover</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-body border-top">
+        <form method="post" action="/pastas/<%= pasta.id %>/permissoes/usuario" class="row g-2 align-items-end">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <div class="col-12">
+            <label class="form-label" for="usuarioId">Pessoa</label>
+            <select class="form-select" id="usuarioId" name="usuarioId" required>
+              <% pessoas.forEach(function (p) { %>
+                <option value="<%= p.usuario_id %>"><%= p.nome %> (<%= p.email %>)</option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="col-5">
+            <label class="form-label" for="nivelInd">Nível</label>
+            <select class="form-select" id="nivelInd" name="nivel">
+              <% niveis.forEach(function (n) { %><option value="<%= n %>" <%= n === 'R*' ? 'selected' : '' %>><%= n %></option><% }); %>
+            </select>
+          </div>
+          <div class="col-5">
+            <label class="form-label" for="expiraEm">Expira em</label>
+            <input class="form-control" type="date" id="expiraEm" name="expiraEm">
+          </div>
+          <div class="col-2 d-grid"><button class="btn btn-primary">Salvar</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

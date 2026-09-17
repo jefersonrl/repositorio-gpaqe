@@ -1,0 +1,81 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h5 mb-3">Convites externos: <%= projeto.nome %></h1>
+<p class="small text-body-secondary">
+  O convite concede acesso a uma pasta específica, com prazo. Vencido o prazo, a permissão deixa de valer sozinha.
+</p>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold">Novo convite</div>
+  <div class="card-body">
+    <form method="post" action="/projetos/<%= projeto.id %>/convites" class="row g-2 align-items-end">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="col-md-3">
+        <label class="form-label" for="nome">Nome</label>
+        <input class="form-control" id="nome" name="nome" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label" for="email">E-mail</label>
+        <input class="form-control" type="email" id="email" name="email" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label" for="pastaId">Pasta</label>
+        <select class="form-select" id="pastaId" name="pastaId" required>
+          <% pastas.forEach(function (p) { %><option value="<%= p.id %>"><%= p.nome %></option><% }); %>
+        </select>
+      </div>
+      <div class="col-md-1">
+        <label class="form-label" for="perfil">Perfil</label>
+        <select class="form-select" id="perfil" name="perfil">
+          <option value="3">3</option><option value="4" selected>4</option>
+        </select>
+      </div>
+      <div class="col-md-1">
+        <label class="form-label" for="nivel">Nível</label>
+        <select class="form-select" id="nivel" name="nivel">
+          <option value="C" selected>C</option><option value="I">I</option><option value="R*">R*</option>
+        </select>
+      </div>
+      <div class="col-md-1">
+        <label class="form-label" for="dias">Dias</label>
+        <input class="form-control" id="dias" name="dias" value="30">
+      </div>
+      <div class="col-12"><button class="btn btn-primary mt-2">Gerar convite</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table tabela-compacta mb-0 align-middle">
+      <thead><tr><th>Pessoa</th><th>Pasta</th><th>Nível</th><th>Expira</th><th>Situação</th><th></th></tr></thead>
+      <tbody>
+        <% if (!convites.length) { %>
+          <tr><td colspan="6" class="small text-body-secondary">Nenhum convite emitido.</td></tr>
+        <% } %>
+        <% convites.forEach(function (c) { %>
+          <tr>
+            <td class="small"><%= c.nome %><br><span class="text-body-secondary"><%= c.email %></span></td>
+            <td class="small"><%= c.pasta_nome %></td>
+            <td><%- include('../partials/nivel', { nivel: c.nivel }) %></td>
+            <td class="small"><%= new Date(c.expira_em).toLocaleDateString('pt-BR') %></td>
+            <td class="small">
+              <% if (c.revogado) { %><span class="badge text-bg-danger">revogado</span>
+              <% } else if (c.vencido) { %><span class="badge text-bg-secondary">vencido</span>
+              <% } else if (c.aceito_em) { %><span class="badge text-bg-success">aceito</span>
+              <% } else { %><span class="badge text-bg-warning text-dark">aguardando</span><% } %>
+            </td>
+            <td class="text-end">
+              <% if (!c.revogado) { %>
+                <form method="post" action="/projetos/<%= projeto.id %>/convites/<%= c.id %>/revogar">
+                  <input type="hidden" name="_csrf" value="<%= csrf %>">
+                  <button class="btn btn-sm btn-link text-danger p-0">revogar</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

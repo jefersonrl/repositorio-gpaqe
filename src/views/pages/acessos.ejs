@@ -1,0 +1,67 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h5 mb-3">Relatório de acessos: <%= projeto.nome %></h1>
+<p class="small text-body-secondary">
+  Este relatório é o insumo da revisão periódica de acessos prevista na governança do grupo.
+</p>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold">Pessoas vinculadas</div>
+  <div class="table-responsive">
+    <table class="table tabela-compacta mb-0">
+      <thead><tr><th>Nome</th><th>Instituição</th><th>Perfil</th><th>Núcleo</th><th>Vigência</th></tr></thead>
+      <tbody>
+        <% pessoas.forEach(function (p) { %>
+          <tr>
+            <td><%= p.nome %><br><span class="small text-body-secondary"><%= p.email %></span></td>
+            <td class="small"><%= p.instituicao || '' %></td>
+            <td class="small"><%= p.perfil %>: <%= p.perfil_nome %></td>
+            <td class="small"><%= p.nucleo_nome || '' %></td>
+            <td class="small"><%= p.fim ? 'até ' + new Date(p.fim).toLocaleDateString('pt-BR') : 'sem prazo' %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold">Regras individuais em vigor</div>
+  <div class="table-responsive">
+    <table class="table tabela-compacta mb-0">
+      <thead><tr><th>Pessoa</th><th>Pasta</th><th>Nível</th><th>Expira</th><th>Concedida por</th></tr></thead>
+      <tbody>
+        <% if (!individuais.length) { %>
+          <tr><td colspan="5" class="small text-body-secondary">Nenhuma regra individual neste projeto.</td></tr>
+        <% } %>
+        <% individuais.forEach(function (r) { %>
+          <tr>
+            <td class="small"><%= r.usuario %><br><span class="text-body-secondary"><%= r.email %></span></td>
+            <td class="small"><%= r.pasta %></td>
+            <td><%- include('../partials/nivel', { nivel: r.nivel }) %></td>
+            <td class="small"><%= r.expira_em ? new Date(r.expira_em).toLocaleDateString('pt-BR') : 'sem prazo' %></td>
+            <td class="small"><%= r.concedida_por_nome || '' %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header fw-semibold">Matriz aplicada por pasta</div>
+  <div class="table-responsive">
+    <table class="table tabela-compacta mb-0">
+      <thead><tr><th>Pasta</th><th>Perfil</th><th>Nível</th></tr></thead>
+      <tbody>
+        <% porPerfil.forEach(function (r) { %>
+          <tr>
+            <td class="small"><%= r.pasta %></td>
+            <td class="small"><%= r.perfil %>: <%= r.perfil_nome %></td>
+            <td><%- include('../partials/nivel', { nivel: r.nivel }) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

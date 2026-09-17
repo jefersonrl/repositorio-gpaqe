@@ -1,0 +1,25 @@
+<%- include('../partials/cabecalho') %>
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h5 mb-3">Minha conta</h1>
+        <p class="small mb-3"><%= usuario.nome %><br><span class="text-body-secondary"><%= usuario.email %></span></p>
+        <form method="post" action="/conta/senha">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <div class="mb-3">
+            <label class="form-label" for="senhaAtual">Senha atual</label>
+            <input class="form-control" type="password" id="senhaAtual" name="senhaAtual" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="novaSenha">Nova senha</label>
+            <input class="form-control" type="password" id="novaSenha" name="novaSenha" minlength="12" required>
+            <div class="form-text">Mínimo de 12 caracteres.</div>
+          </div>
+          <button class="btn btn-primary">Alterar senha</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

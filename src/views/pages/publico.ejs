@@ -1,0 +1,19 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h4 mb-1">Grupo de Pesquisa Avaliação e Qualidade Educacional</h1>
+<p class="text-body-secondary mb-4">Projetos em andamento e material institucional aberto.</p>
+<div class="row g-3">
+  <% if (!projetos.length) { %>
+    <p class="text-body-secondary">Nenhum conteúdo público disponível no momento.</p>
+  <% } %>
+  <% projetos.forEach(function (p) { %>
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6"><a href="/publico/pastas/<%= p.pasta_id %>"><%= p.nome %></a></h2>
+          <p class="small text-body-secondary mb-0"><%= p.descricao || p.sigla %></p>
+        </div>
+      </div>
+    </div>
+  <% }); %>
+</div>
+<%- include('../partials/rodape') %>

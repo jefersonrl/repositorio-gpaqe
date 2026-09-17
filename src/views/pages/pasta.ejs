@@ -1,0 +1,141 @@
+<%- include('../partials/cabecalho') %>
+<nav aria-label="trilha" class="trilha mb-2">
+  <ol class="breadcrumb small mb-0">
+    <% if (projeto) { %>
+      <li class="breadcrumb-item"><a href="/projetos/<%= projeto.id %>"><%= projeto.sigla %></a></li>
+    <% } else { %>
+      <li class="breadcrumb-item"><a href="/">Nível Grupo</a></li>
+    <% } %>
+    <% trilha.forEach(function (t, i) { %>
+      <% if (i === trilha.length - 1) { %>
+        <li class="breadcrumb-item active" aria-current="page"><%= t.nome %></li>
+      <% } else { %>
+        <li class="breadcrumb-item"><a href="/pastas/<%= t.id %>"><%= t.nome %></a></li>
+      <% } %>
+    <% }); %>
+  </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+  <div>
+    <h1 class="h5 mb-1"><%= pasta.nome %></h1>
+    <p class="small text-body-secondary mb-0"><%= pasta.descricao || '' %></p>
+  </div>
+  <div class="text-end">
+    <span class="small text-body-secondary">Seu acesso</span>
+    <%- include('../partials/nivel', { nivel: nivel }) %>
+    <% if (cap.gerir) { %>
+      <a class="btn btn-sm btn-outline-secondary ms-2" href="/pastas/<%= pasta.id %>/permissoes">Permissões</a>
+    <% } %>
+  </div>
+</div>
+
+<% if (pasta.sensivel) { %>
+  <div class="alert alert-warning py-2 small">
+    Pasta sensível. O conteúdo não pode ser compartilhado por link externo e todo download fica registrado.
+  </div>
+<% } %>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Subpastas</div>
+      <ul class="list-group list-group-flush lista-pastas">
+        <% if (!subpastas.length) { %>
+          <li class="list-group-item small text-body-secondary">Nenhuma subpasta visível.</li>
+        <% } %>
+        <% subpastas.forEach(function (s) { %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="/pastas/<%= s.id %>"><%= s.nome %></a>
+            <%- include('../partials/nivel', { nivel: s.nivel }) %>
+          </li>
+        <% }); %>
+      </ul>
+      <% if (cap.organizar) { %>
+        <div class="card-body border-top">
+          <form method="post" action="/pastas/<%= pasta.id %>/subpastas">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <label class="form-label" for="novaPasta">Nova subpasta</label>
+            <div class="input-group">
+              <input class="form-control" id="novaPasta" name="nome" required>
+              <button class="btn btn-outline-primary">Criar</button>
+            </div>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+        <span>Arquivos</span>
+        <span class="small text-body-secondary"><%= arquivos.length %> item(ns)</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover tabela-compacta mb-0 align-middle">
+          <thead>
+            <tr><th>Nome</th><th>Versão</th><th>Tamanho</th><th>Autor</th><th>Atualizado</th></tr>
+          </thead>
+          <tbody>
+            <% if (!arquivos.length) { %>
+              <tr><td colspan="5" class="text-body-secondary small">Nenhum arquivo nesta pasta.</td></tr>
+            <% } %>
+            <% arquivos.forEach(function (a) { %>
+              <tr>
+                <td>
+                  <a href="/arquivos/<%= a.id %>"><%= a.nome %></a>
+                  <% if (a.atalho_para) { %>
+                    <span class="badge text-bg-light border ms-1" title="Atalho para a pasta canônica">atalho</span>
+                  <% } %>
+                </td>
+                <td><%= a.versao_numero || '' %></td>
+                <td><%= tamanho(a.tamanho_bytes) %></td>
+                <td class="small"><%= a.autor_nome %></td>
+                <td class="small"><%= a.enviado_em ? new Date(a.enviado_em).toLocaleString('pt-BR') : '' %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <% if (cap.enviar) { %>
+        <div class="card-body border-top">
+          <form method="post" action="/pastas/<%= pasta.id %>/arquivos" enctype="multipart/form-data" class="row g-2 align-items-end">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <div class="col-md-5">
+              <label class="form-label" for="arquivo">Enviar arquivo</label>
+              <input class="form-control" type="file" id="arquivo" name="arquivo" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="nomeArquivo">Nome no repositório</label>
+              <input class="form-control" id="nomeArquivo" name="nome" placeholder="opcional">
+            </div>
+            <div class="col-md-3 d-grid">
+              <button class="btn btn-primary">Enviar</button>
+            </div>
+          </form>
+        </div>
+      <% } %>
+      <% if (cap.organizar) { %>
+        <div class="card-body border-top">
+          <form method="post" action="/pastas/<%= pasta.id %>/atalhos" class="row g-2 align-items-end">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <div class="col-md-4">
+              <label class="form-label" for="arquivoId">Número do arquivo de origem</label>
+              <input class="form-control" id="arquivoId" name="arquivoId" required>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label" for="nomeAtalho">Nome do atalho</label>
+              <input class="form-control" id="nomeAtalho" name="nome" placeholder="opcional">
+            </div>
+            <div class="col-md-3 d-grid">
+              <button class="btn btn-outline-secondary">Criar atalho</button>
+            </div>
+            <p class="form-text mb-0">O atalho aponta para a pasta canônica. Nenhuma cópia é criada.</p>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

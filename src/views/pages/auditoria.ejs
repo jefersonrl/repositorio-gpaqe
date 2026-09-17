@@ -1,0 +1,40 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h5 mb-3">Auditoria: <%= projeto.nome %></h1>
+<form class="card shadow-sm mb-4" method="get">
+  <div class="card-body row g-2 align-items-end">
+    <div class="col-md-3">
+      <label class="form-label" for="de">De</label>
+      <input class="form-control" type="date" id="de" name="de" value="<%= filtros.de %>">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" for="ate">Até</label>
+      <input class="form-control" type="date" id="ate" name="ate" value="<%= filtros.ate %>">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="acao">Ação</label>
+      <input class="form-control" id="acao" name="acao" value="<%= filtros.acao %>" placeholder="envio, download, excluir...">
+    </div>
+    <div class="col-md-2 d-grid"><button class="btn btn-primary">Filtrar</button></div>
+  </div>
+</form>
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table tabela-compacta mb-0 align-middle">
+      <thead><tr><th>Quando</th><th>Quem</th><th>Ação</th><th>Item</th><th>Detalhe</th><th>Origem</th></tr></thead>
+      <tbody>
+        <% registros.forEach(function (r) { %>
+          <tr>
+            <td class="small"><%= new Date(r.ocorrido_em).toLocaleString('pt-BR') %></td>
+            <td class="small"><%= r.usuario_nome || 'não identificado' %></td>
+            <td class="small"><span class="badge text-bg-light border"><%= r.acao %></span></td>
+            <td class="small"><%= r.entidade %> <%= r.entidade_id || '' %></td>
+            <td class="small"><%= r.detalhe || '' %></td>
+            <td class="small"><%= r.ip || '' %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<p class="small text-body-secondary mt-2">O registro é somente de inserção. Nenhuma tela do sistema edita ou apaga estas linhas.</p>
+<%- include('../partials/rodape') %>

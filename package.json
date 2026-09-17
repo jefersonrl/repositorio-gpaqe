@@ -1,0 +1,41 @@
+{
+  "name": "repositorio-gpaqe",
+  "version": "1.0.0",
+  "description": "Repositório digital multiprojeto do GPAQE, com a matriz RACI aplicada por pasta.",
+  "main": "src/server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "banco:criar": "mysql -u\"$DB_USER\" -p\"$DB_PASSWORD\" \"$DB_NAME\" < db/schema.sql && mysql -u\"$DB_USER\" -p\"$DB_PASSWORD\" \"$DB_NAME\" < db/seed.sql",
+    "banco:projetos": "node db/seed_projetos.js",
+    "teste": "node tests/e2e.js",
+    "teste:s3": "node tests/armazenamento_s3.js",
+    "s3:falso": "node tests/s3_falso.js",
+    "migrar": "node db/migrar.js",
+    "migrar:projetos": "node db/migrar.js --projetos"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1131.0",
+    "@aws-sdk/s3-request-presigner": "^3.1131.0",
+    "bcryptjs": "^3.0.3",
+    "bootstrap": "^5.3.8",
+    "connect-flash": "^0.1.1",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "express-mysql-session": "^3.0.3",
+    "express-rate-limit": "^8.7.0",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0",
+    "method-override": "^3.0.0",
+    "multer": "^2.3.0",
+    "mysql2": "^3.24.4"
+  },
+  "private": true
+}

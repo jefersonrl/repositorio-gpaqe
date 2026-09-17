@@ -1,0 +1,80 @@
+<%- include('../partials/cabecalho') %>
+<h1 class="h4 mb-3">Meus projetos</h1>
+
+<% if (!meus.length) { %>
+  <p class="text-body-secondary">Você ainda não tem vínculo com nenhum projeto.</p>
+<% } %>
+
+<div class="row g-3">
+  <% meus.forEach(function (p) { %>
+    <div class="col-md-6 col-xl-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6 mb-1"><a href="/projetos/<%= p.id %>"><%= p.nome %></a></h2>
+          <p class="small text-body-secondary mb-2"><%= p.sigla %></p>
+          <p class="small mb-0">
+            Perfil <%= p.perfil %>: <%= p.perfil_nome %>
+            <% if (p.nucleo_nome) { %><br>Núcleo: <%= p.nucleo_nome %><% } %>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% }); %>
+
+  <% if (pastaGrupo && nivelGrupo !== 'X') { %>
+    <div class="col-md-6 col-xl-4">
+      <div class="card h-100 shadow-sm border-primary-subtle">
+        <div class="card-body">
+          <h2 class="h6 mb-1"><a href="/pastas/<%= pastaGrupo.id %>">Recursos compartilhados do grupo</a></h2>
+          <p class="small text-body-secondary mb-2">Nível Grupo, comum a todos os projetos</p>
+          <p class="small mb-0">Seu acesso: <%- include('../partials/nivel', { nivel: nivelGrupo }) %></p>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<% if (usuario.admin_sistema) { %>
+  <hr class="my-4">
+  <h2 class="h5 mb-3">Administração do sistema</h2>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold">Novo projeto</div>
+        <div class="card-body">
+          <form method="post" action="/projetos">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <div class="mb-2">
+              <label class="form-label" for="nome">Nome</label>
+              <input class="form-control" id="nome" name="nome" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label" for="sigla">Sigla</label>
+              <input class="form-control" id="sigla" name="sigla" required maxlength="30">
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="descricao">Descrição</label>
+              <textarea class="form-control" id="descricao" name="descricao" rows="2"></textarea>
+            </div>
+            <button class="btn btn-primary">Criar com a estrutura padrão</button>
+            <p class="form-text mb-0">Gera as 16 pastas e aplica a matriz RACI do modelo.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold">Todos os projetos</div>
+        <ul class="list-group list-group-flush">
+          <% todos.forEach(function (p) { %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <a href="/projetos/<%= p.id %>"><%= p.nome %></a>
+              <span class="badge text-bg-light"><%= p.sigla %></span>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    </div>
+  </div>
+<% } %>
+<%- include('../partials/rodape') %>

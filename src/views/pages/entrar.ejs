@@ -1,0 +1,43 @@
+<%- include('../partials/cabecalho') %>
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-1">Entrar</h1>
+        <p class="text-body-secondary small">Repositório digital multiprojeto do GPAQE.</p>
+        <form method="post" action="/entrar">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <div class="mb-3">
+            <label class="form-label" for="email">E-mail</label>
+            <input class="form-control" type="email" id="email" name="email" required autofocus>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="senha">Senha</label>
+            <input class="form-control" type="password" id="senha" name="senha" required>
+          </div>
+          <button class="btn btn-primary w-100">Entrar</button>
+        </form>
+      </div>
+    </div>
+    <% if (modoDemonstracao) { %>
+      <div class="card mt-3 border-warning-subtle">
+        <div class="card-body">
+          <p class="fw-semibold mb-1">Ambiente de demonstração</p>
+          <p class="small text-body-secondary mb-2">
+            Entre com qualquer uma das contas abaixo para ver como o sistema se comporta em cada perfil.
+            A senha é a mesma para todas: <code>GpaqeTrocarEsta2026</code>
+          </p>
+          <ul class="small mb-0 ps-3">
+            <li><code>coordenacao@gpaqe.exemplo</code> Perfil 1, coordenação</li>
+            <li><code>interno@gpaqe.exemplo</code> Perfil 2, colaborador interno</li>
+            <li><code>externo@gpaqe.exemplo</code> Perfil 3, parceiro internacional</li>
+            <li><code>revisor@gpaqe.exemplo</code> Perfil 4, revisor externo</li>
+            <li><code>aluno@gpaqe.exemplo</code> Perfil 5, orientando</li>
+          </ul>
+        </div>
+      </div>
+    <% } %>
+    <p class="text-center mt-3"><a href="/publico">Ver a área pública</a></p>
+  </div>
+</div>
+<%- include('../partials/rodape') %>

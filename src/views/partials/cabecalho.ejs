@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= titulo %> | Repositório GPAQE</title>
+<link rel="stylesheet" href="/public/css/bootstrap.min.css">
+<link rel="stylesheet" href="/public/css/estilo.css">
+</head>
+<body class="bg-body-tertiary">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#1F3864">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-semibold" href="/">Repositório GPAQE</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <% if (usuario) { %>
+          <li class="nav-item"><a class="nav-link" href="/">Meus projetos</a></li>
+          <li class="nav-item"><a class="nav-link" href="/buscar">Busca</a></li>
+          <% if (usuario.admin_sistema) { %>
+            <li class="nav-item"><a class="nav-link" href="/admin/usuarios">Pessoas</a></li>
+          <% } %>
+        <% } %>
+        <li class="nav-item"><a class="nav-link" href="/publico">Área pública</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <% if (usuario) { %>
+          <li class="nav-item"><a class="nav-link" href="/conta"><%= usuario.nome %></a></li>
+          <li class="nav-item">
+            <form method="post" action="/sair" class="d-inline">
+              <input type="hidden" name="_csrf" value="<%= csrf %>">
+              <button class="btn btn-sm btn-outline-light ms-2 my-1">Sair</button>
+            </form>
+          </li>
+        <% } else { %>
+          <li class="nav-item"><a class="nav-link" href="/entrar">Entrar</a></li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
+<% if (typeof modoDemonstracao !== 'undefined' && modoDemonstracao) { %>
+  <div class="text-center small py-1" style="background-color:#FFF3CD;color:#664d03">
+    Ambiente de demonstração. Os dados são fictícios e podem ser apagados a qualquer momento.
+  </div>
+<% } %>
+<main class="container-fluid px-3 px-lg-4 py-4">
+<%- include('mensagens') %>
