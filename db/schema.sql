@@ -150,7 +150,11 @@ CREATE TABLE permissao (
   usuario_k     INT     AS (IFNULL(usuario_id, 0)) STORED,
   UNIQUE KEY uk_permissao (pasta_id, perfil_k, usuario_k),
   CONSTRAINT fk_perm_pasta   FOREIGN KEY (pasta_id)   REFERENCES pasta(id)   ON DELETE CASCADE,
-  CONSTRAINT fk_perm_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+  -- Sem ON DELETE CASCADE de propósito: o MySQL não aceita ação em cascata
+  -- sobre a coluna que serve de base para uma coluna gerada STORED, e usuario_id
+  -- é a base de usuario_k. Na prática o sistema nunca apaga usuário, apenas
+  -- encerra o vínculo, então a restrição não atrapalha.
+  CONSTRAINT fk_perm_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id),
   CONSTRAINT fk_perm_perfil  FOREIGN KEY (perfil)     REFERENCES perfil(numero),
   INDEX ix_perm_pasta (pasta_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

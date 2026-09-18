@@ -10,6 +10,13 @@ const pool = mysql.createPool({
   dateStrings: false
 });
 
+// Banco em nuvem cai e volta: o plano gratuito do Aiven desliga por inatividade,
+// e a rede oscila. Sem este ouvinte, um erro de conexão sobe como exceção não
+// tratada e derruba a aplicação inteira, em vez de apenas falhar a requisição.
+pool.on('error', (erro) => {
+  console.error('Erro na conexão com o banco:', erro.code || erro.message);
+});
+
 // Toda consulta usa instrução preparada. Nunca concatenar valor em SQL.
 async function consultar(sql, params = []) {
   const [linhas] = await pool.execute(sql, params);
